@@ -14,7 +14,7 @@ In your terminal, go to your MagicMirror's modules directory, clone this reposit
 
 ```bash
 cd ~/MagicMirror/modules
-git clone https://github.com/KristjanESPERANTO/MMM-SystemTemperature
+git clone https://github.com/MagicMirrorModules/MMM-SystemTemperature
 cd MMM-SystemTemperature
 npm ci
 ```
@@ -103,7 +103,7 @@ The following properties can be configured:
 
 ## Contributing
 
-If you find any problems, bugs or have questions, please [open a GitHub issue](https://github.com/KristjanESPERANTO/MMM-SystemTemperature/issues) in this repository.
+If you find any problems, bugs or have questions, please [open a GitHub issue](https://github.com/MagicMirrorModules/MMM-SystemTemperature/issues) in this repository.
 
 Pull requests are of course also very welcome 🙂
 
