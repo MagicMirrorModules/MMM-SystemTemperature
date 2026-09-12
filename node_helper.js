@@ -27,6 +27,7 @@ module.exports = NodeHelper.create({
       }
 
       // Start temperature monitoring
+      this.sendTemperature();
       this.intervalId = setInterval(() => {
         this.sendTemperature();
       }, this.config.updateInterval);
