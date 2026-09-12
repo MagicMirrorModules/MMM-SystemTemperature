@@ -6,6 +6,7 @@ module.exports = NodeHelper.create({
   start() {
     Log.log(`Starting module helper: ${this.name}`);
     this.intervalId = null;
+    this.temperatureRequestInFlight = false;
   },
 
   stop() {
@@ -62,12 +63,22 @@ module.exports = NodeHelper.create({
   },
 
   async sendTemperature() {
-    const temperature = await this.getCPUTemperature();
+    if (this.temperatureRequestInFlight) return;
 
-    if (temperature !== null) {
-      this.sendSocketNotification("TEMPERATURE", temperature);
-    } else {
-      Log.warn(`${this.name}: Skipping temperature update due to invalid data`);
+    this.temperatureRequestInFlight = true;
+
+    try {
+      const temperature = await this.getCPUTemperature();
+
+      if (temperature !== null) {
+        this.sendSocketNotification("TEMPERATURE", temperature);
+      } else {
+        Log.warn(
+          `${this.name}: Skipping temperature update due to invalid data`
+        );
+      }
+    } finally {
+      this.temperatureRequestInFlight = false;
     }
   }
 });
