@@ -45,22 +45,31 @@ Module.register("MMM-SystemTemperature", {
   getDom() {
     const wrapper = document.createElement("div");
 
-    if (this.temperature !== null && !isNaN(this.temperature)) {
-      wrapper.innerHTML =
-        this.config.prependString + this.getTemperatureLabel();
+    if (Number.isFinite(this.temperature)) {
+      wrapper.append(this.config.prependString, this.getTemperatureLabel());
       wrapper.style.color = this.stateConfig?.color || "";
     } else {
-      wrapper.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${this.translate("LOADING")}`;
+      const spinner = document.createElement("i");
+      spinner.className = "fas fa-spinner fa-spin";
+      wrapper.append(spinner, ` ${this.translate("LOADING")}`);
     }
 
     return wrapper;
   },
 
   getTemperatureLabel() {
-    return `<span class="temperatureLabel">
-      <span class="temperatureValue">${this.getConvertedTemperature()}</span>
-      <span class="temperatureUnit">${this.config.unit.toUpperCase()}</span>
-    </span>`;
+    const label = document.createElement("span");
+    const value = document.createElement("span");
+    const unit = document.createElement("span");
+
+    label.className = "temperatureLabel";
+    value.className = "temperatureValue";
+    unit.className = "temperatureUnit";
+    value.textContent = this.getConvertedTemperature();
+    unit.textContent = this.config.unit.toUpperCase();
+    label.append(value, unit);
+
+    return label;
   },
 
   getStateConfigByTemperature() {
