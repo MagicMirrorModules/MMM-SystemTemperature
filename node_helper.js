@@ -46,6 +46,7 @@ module.exports = NodeHelper.create({
       if (
         !data ||
         typeof data.main !== "number" ||
+        data.main === 0 ||
         data.main < -50 ||
         data.main > 150
       ) {

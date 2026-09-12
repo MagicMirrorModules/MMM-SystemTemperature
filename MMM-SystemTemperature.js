@@ -33,7 +33,9 @@ Module.register("MMM-SystemTemperature", {
 
   socketNotificationReceived(notification, payload) {
     if (notification === "TEMPERATURE") {
-      this.temperature = parseFloat(payload) || null;
+      const temperature = Number.parseFloat(payload);
+      this.temperature =
+        Number.isFinite(temperature) && temperature !== 0 ? temperature : null;
       this.stateConfig = this.getStateConfigByTemperature();
       this.updateDom(this.config.animationSpeed);
       this.commandExecutor();
