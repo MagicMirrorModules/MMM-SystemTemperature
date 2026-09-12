@@ -1,10 +1,36 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [2.1.0](https://github.com/MagicMirrorModules/MMM-SystemTemperature/compare/v2.0.1...v2.1.0) (2026-09-12)
 
+### Added
+
+* add demo script ([2c9ddb1](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/2c9ddb1b08e6d43128b9ad7970078db29480ee1a))
+
+### Fixed
+
+* **helper:** prevent overlapping temperature reads ([8c1ca08](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/8c1ca083984d0797a45bbd63aff9f48987ebb83a))
+* **sensor:** reject zero CPU readings ([9304abf](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/9304abfdb277877fd1a23aafecfccc2c87842c78))
+
+### Performance Improvements
+
+* avoid unnecessary command timers ([5cfbf75](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/5cfbf75baef5236a3fb4dc90ec91ffd4472b294c))
+* **helper:** fetch initial temperature immediately ([8fd86fe](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/8fd86fe557d6fc9a05e8a6395e6c211a6498a35a))
+
+### Documentation
+
+* add prettier-ignore comment for code block in README.md ([5577140](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/5577140f24df5536b75388490829ce2f0453d3d4))
+
+### Chores
+
+* add release automation ([e11902a](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/e11902a8f524715767e004d923008503253b396d))
+* update dependencies ([c866426](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/c866426a37829462f5048a0f02f7db4dfb88e38a))
+* update repository URL in package.json ([25aad0e](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/25aad0e1eaefd877e5eb4d4d6e757a34b6233712))
+
+### Code Refactoring
+
+* build temperature display with DOM APIs ([d246a84](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/d246a84fafbc8216289bbe849a3604732939dc30))
 ## [2.0.1](https://github.com/KristjanESPERANTO/MMM-SystemTemperature/compare/v2.0.0...v2.0.1) - 2025-09-10
 
 - chore: update devDependencies
