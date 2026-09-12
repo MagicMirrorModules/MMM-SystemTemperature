@@ -115,6 +115,7 @@ Module.register("MMM-SystemTemperature", {
     const context = this;
 
     return function throttledExecutor() {
+      if (!context.stateConfig?.command) return;
       if (timeoutId) return; // Already scheduled
 
       timeoutId = setTimeout(() => {
