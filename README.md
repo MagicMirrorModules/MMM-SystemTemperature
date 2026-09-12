@@ -33,6 +33,7 @@ npm ci
 
 To use this module, add it to the modules array in the `config/config.js` file:
 
+<!-- prettier-ignore -->
 ```js
     {
       module: 'MMM-SystemTemperature',
