@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.1.1](https://github.com/MagicMirrorModules/MMM-SystemTemperature/compare/v2.1.0...v2.1.1) (2026-10-11)
+
+### Fixed
+
+* **alerts:** trigger commands once per alert ([578d067](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/578d06710a6572d521919075c970de5956351b33))
+* **config:** validate temperature interval and unit ([390b442](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/390b4426e7708cfda66cc406b715a3b443e03a64))
+* **sensor:** report unavailable temperature ([454909e](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/454909eac5bc17b36d2e48ad215248b0bc50def4))
+
+### Chores
+
+* add CHANGELOG.md to prettier ignore list ([1fcd47a](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/1fcd47a72b8f01b95e0cfec5b3d1ccdf3663d126))
+* update dependencies ([9337903](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/93379032f0790f259869f068f6a6fb8e34fe12fa))
+
+### Continuous Integration
+
+* add automated testing workflow ([ec3b8a1](https://github.com/MagicMirrorModules/MMM-SystemTemperature/commit/ec3b8a109c079bbe15be40d975f0a948f84fe894))
+
 ## [2.1.0](https://github.com/MagicMirrorModules/MMM-SystemTemperature/compare/v2.0.1...v2.1.0) (2026-09-12)
 
 ### Added
