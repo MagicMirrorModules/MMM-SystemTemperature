@@ -52,16 +52,22 @@ Module.register("MMM-SystemTemperature", {
       const temperature = Number.parseFloat(payload);
       this.temperature =
         Number.isFinite(temperature) && temperature !== 0 ? temperature : null;
+      this.sensorUnavailable = false;
       this.stateConfig = this.getStateConfigByTemperature();
       this.updateDom(this.config.animationSpeed);
       this.commandExecutor();
+    } else if (notification === "TEMPERATURE_UNAVAILABLE") {
+      this.sensorUnavailable = true;
+      this.updateDom(this.config.animationSpeed);
     }
   },
 
   getDom() {
     const wrapper = document.createElement("div");
 
-    if (Number.isFinite(this.temperature)) {
+    if (this.sensorUnavailable) {
+      wrapper.append("Temperature unavailable");
+    } else if (Number.isFinite(this.temperature)) {
       wrapper.append(this.config.prependString, this.getTemperatureLabel());
       wrapper.style.color = this.stateConfig?.color || "";
     } else {

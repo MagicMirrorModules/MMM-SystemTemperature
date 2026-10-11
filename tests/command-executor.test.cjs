@@ -7,6 +7,10 @@ const moduleSource = readFileSync(
   new URL("../MMM-SystemTemperature.js", `file://${__filename}`),
   "utf8"
 );
+const helperSource = readFileSync(
+  new URL("../node_helper.js", `file://${__filename}`),
+  "utf8"
+);
 
 const createTimers = () => {
   const timers = new Map();
@@ -37,6 +41,16 @@ const loadModule = (
   let definition;
   runInNewContext(moduleSource, {
     clearTimeout: timers.clearTimeout,
+    document: {
+      createElement: (tagName) => ({
+        append(...children) {
+          this.children.push(...children);
+        },
+        children: [],
+        style: {},
+        tagName
+      })
+    },
     Module: {
       register: (_name, moduleDefinition) => {
         definition = moduleDefinition;
@@ -52,6 +66,20 @@ const loadModule = (
     sendNotification: (notification, payload) =>
       notifications.push({ notification, payload })
   });
+};
+
+const loadHelper = (cpuTemperature) => {
+  const mocks = {
+    logger: { error: () => null, log: () => null, warn: () => null },
+    node_helper: { create: (helper) => helper },
+    systeminformation: { cpuTemperature }
+  };
+  const helperModule = { exports: {} };
+  runInNewContext(helperSource, {
+    module: helperModule,
+    require: (name) => mocks[name]
+  });
+  return helperModule.exports;
 };
 
 const createAlertConfig = () => ({
@@ -113,6 +141,50 @@ test("start falls back for invalid interval and non-string unit", () => {
 
   assert.equal(socketNotifications[0].payload.updateInterval, 5000);
   assert.equal(socketNotifications[0].payload.unit, "c");
+});
+
+test("helper reports unavailable temperature readings", async () => {
+  const helper = loadHelper(async () => ({ main: 0 }));
+  const socketNotifications = [];
+  helper.temperatureRequestInFlight = false;
+  helper.sendSocketNotification = (notification, payload) =>
+    socketNotifications.push({ notification, payload });
+
+  await helper.sendTemperature();
+
+  assert.equal(socketNotifications.length, 1);
+  assert.equal(socketNotifications[0].notification, "TEMPERATURE_UNAVAILABLE");
+});
+
+test("unavailable status is shown and valid readings restore the display", () => {
+  const timers = createTimers();
+  const module = loadModule(createAlertConfig(), timers, []);
+  module.config.animationSpeed = 0;
+  module.translate = (key) => key;
+  let updateCount = 0;
+  let commandCount = 0;
+  module.updateDom = () => {
+    updateCount += 1;
+  };
+  module.commandExecutor = () => {
+    commandCount += 1;
+  };
+  module.temperature = 80;
+  module.stateConfig = module.config.critical;
+
+  module.socketNotificationReceived("TEMPERATURE_UNAVAILABLE");
+  const unavailableDom = module.getDom();
+
+  assert.equal(unavailableDom.children[0], "Temperature unavailable");
+  assert.equal(module.stateConfig, module.config.critical);
+  assert.equal(commandCount, 0);
+
+  module.socketNotificationReceived("TEMPERATURE", 80);
+
+  assert.equal(module.sensorUnavailable, false);
+  assert.equal(module.temperature, 80);
+  assert.equal(commandCount, 1);
+  assert.equal(updateCount, 2);
 });
 
 test("command runs once while temperature remains in the same alert state", () => {

@@ -78,6 +78,7 @@ module.exports = NodeHelper.create({
         Log.warn(
           `${this.name}: Skipping temperature update due to invalid data`
         );
+        this.sendSocketNotification("TEMPERATURE_UNAVAILABLE");
       }
     } finally {
       this.temperatureRequestInFlight = false;
