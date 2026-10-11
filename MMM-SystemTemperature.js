@@ -112,21 +112,34 @@ Module.register("MMM-SystemTemperature", {
   getCommandExecutor() {
     const wait = this.config.updateInterval * 5;
     let timeoutId = null;
+    let lastStateConfig = null;
+    const alertedStates = new Set();
     const context = this;
 
-    return function throttledExecutor() {
-      if (!context.stateConfig?.command) return;
-      if (timeoutId) return; // Already scheduled
+    return function stateChangeExecutor() {
+      const stateConfig = context.stateConfig ?? null;
+      if (stateConfig === lastStateConfig) return;
+
+      lastStateConfig = stateConfig;
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+      if (!stateConfig) {
+        alertedStates.clear();
+        return;
+      }
+      if (!stateConfig.command || alertedStates.has(stateConfig)) return;
 
       timeoutId = setTimeout(() => {
         timeoutId = null;
-        const { stateConfig } = context;
-        if (stateConfig?.command) {
-          context.sendNotification(
-            stateConfig.command.notification,
-            stateConfig.command.payload
-          );
-        }
+        if (context.stateConfig !== stateConfig) return;
+
+        alertedStates.add(stateConfig);
+        context.sendNotification(
+          stateConfig.command.notification,
+          stateConfig.command.payload
+        );
       }, wait);
     };
   }
