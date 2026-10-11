@@ -1,1 +1,4 @@
+*.cjs
+*.js
+*.mjs
 CHANGELOG.md
