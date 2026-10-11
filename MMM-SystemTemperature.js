@@ -1,5 +1,9 @@
 /* global Module */
 
+const MIN_UPDATE_INTERVAL = 1000;
+const MAX_UPDATE_INTERVAL = 86400000;
+const VALID_UNITS = ["c", "f", "k"];
+
 Module.register("MMM-SystemTemperature", {
   defaults: {
     prependString: "System temperature: ",
@@ -26,8 +30,20 @@ Module.register("MMM-SystemTemperature", {
   },
 
   start() {
+    const configuredInterval = Number.isFinite(this.config.updateInterval)
+      ? this.config.updateInterval
+      : this.defaults.updateInterval;
+    this.config.updateInterval = Math.max(
+      MIN_UPDATE_INTERVAL,
+      Math.min(configuredInterval, MAX_UPDATE_INTERVAL)
+    );
+
+    const unit = String(this.config.unit ?? "")
+      .trim()
+      .toLowerCase();
+    this.config.unit = VALID_UNITS.includes(unit) ? unit : this.defaults.unit;
+
     this.sendSocketNotification("CONFIG", this.config);
-    this.config.unit = this.config.unit && this.config.unit.toLowerCase();
     this.commandExecutor = this.getCommandExecutor();
   },
 

@@ -28,7 +28,12 @@ const createTimers = () => {
   };
 };
 
-const loadModule = (config, timers, notifications) => {
+const loadModule = (
+  config,
+  timers,
+  notifications,
+  socketNotifications = []
+) => {
   let definition;
   runInNewContext(moduleSource, {
     clearTimeout: timers.clearTimeout,
@@ -42,6 +47,8 @@ const loadModule = (config, timers, notifications) => {
 
   return Object.assign(Object.create(definition), {
     config,
+    sendSocketNotification: (notification, payload) =>
+      socketNotifications.push({ notification, payload: { ...payload } }),
     sendNotification: (notification, payload) =>
       notifications.push({ notification, payload })
   });
@@ -57,6 +64,55 @@ const createAlertConfig = () => ({
     temp: 75,
     command: { notification: "CRITICAL", payload: { level: 2 } }
   }
+});
+
+test("start normalizes update interval and unit before sending config", () => {
+  const timers = createTimers();
+  const socketNotifications = [];
+  const module = loadModule(
+    { ...createAlertConfig(), updateInterval: 1, unit: "F" },
+    timers,
+    [],
+    socketNotifications
+  );
+
+  module.start();
+
+  assert.equal(socketNotifications[0].notification, "CONFIG");
+  assert.equal(socketNotifications[0].payload.updateInterval, 1000);
+  assert.equal(socketNotifications[0].payload.unit, "f");
+});
+
+test("start caps excessive intervals and falls back for unsupported units", () => {
+  const timers = createTimers();
+  const socketNotifications = [];
+  const module = loadModule(
+    { ...createAlertConfig(), updateInterval: 90000000, unit: "rankine" },
+    timers,
+    [],
+    socketNotifications
+  );
+
+  module.start();
+
+  assert.equal(socketNotifications[0].payload.updateInterval, 86400000);
+  assert.equal(socketNotifications[0].payload.unit, "c");
+});
+
+test("start falls back for invalid interval and non-string unit", () => {
+  const timers = createTimers();
+  const socketNotifications = [];
+  const module = loadModule(
+    { ...createAlertConfig(), updateInterval: "often", unit: 42 },
+    timers,
+    [],
+    socketNotifications
+  );
+
+  module.start();
+
+  assert.equal(socketNotifications[0].payload.updateInterval, 5000);
+  assert.equal(socketNotifications[0].payload.unit, "c");
 });
 
 test("command runs once while temperature remains in the same alert state", () => {
